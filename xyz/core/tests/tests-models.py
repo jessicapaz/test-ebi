@@ -151,10 +151,39 @@ class ClientTestCase(TestCase):
         Client.objects.create(
             person=self.person
         )
+
+        ProductService.objects.create(
+            type_choice="S",
+            name="AAA",
+            price=100,
+            commission_rate=0.1
+        )
+
+        self.client = Client.objects.first()
+        self.sale_create = Sale(
+            client=self.client,
+            timestamp='2018-11-13T12:00:00Z'
+        )
+        self.sale_create.save()
+        self.product = ProductService.objects.first()
+        self.sale_create.product_service.add(self.product)
     
     def test_client_create(self):
         client = Client.objects.get(pk=1)
         self.assertEqual(client.person.rg, "2583356")
+    
+    def test_client_products_per_date(self):
+        client = Client.objects.first()
+        start = "2018-11-13T12:00:00Z"
+        end = "2018-11-16T12:00:00Z"
+        products_per_date = client.products_per_date(start, end)
+
+        products_name = []
+        for products in products_per_date:
+            for product in products:
+                products_name.append(product.name)
+        
+        self.assertEqual(products_name, ["AAA"])
 
 
 class ProductServiceTestCase(TestCase):
@@ -233,3 +262,11 @@ class SaleTestCase(TestCase):
         sale = Sale.objects.first()
         total_commission = sale.total_commission
         self.assertEqual(total_commission, 114.29)
+    
+    def test_top_products_per_date(self):
+        sale = Sale.objects.first()
+        start = "2018-11-13T12:00:00Z"
+        end = "2018-11-16T12:00:00Z"
+        products_per_date = sale.top_products_per_date(start, end) 
+
+        self.assertEqual(len(products_per_date), 1)

@@ -1,6 +1,9 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.utils import timezone
+from collections import Counter
+from operator import add
+from functools import reduce
 
 
 class Person(models.Model):
@@ -64,6 +67,16 @@ class Client(models.Model):
         on_delete=models.CASCADE
     )
 
+    def products_per_date(self, start, end):
+        sales = Sale.objects.filter(
+            client=self,
+            timestamp__range=[start, end]
+        )
+        products = []
+        for sale in sales:
+            products.append(sale.product_service.all())
+        return products
+
 
 class ProductService(models.Model):
     TYPE_CHOICES = (
@@ -120,3 +133,18 @@ class Sale(models.Model):
             commissions.append(commission)
         total = sum(commissions)
         return total
+    
+    def top_products_per_date(self, start, end):
+        sales = Sale.objects.filter(
+            timestamp__range=[start, end]
+        )
+
+        counters = []
+        product_name = []
+        for sale in sales:
+            for product in sale.product_service.all():
+                product_name.append(product.name)
+        counters.append(Counter(product_name))
+        return reduce(add, counters)
+
+
