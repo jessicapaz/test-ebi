@@ -3,6 +3,7 @@ from core.models import Address
 from core.models import Person
 from core.models import Seller
 from core.models import Client
+from core.models import ProductService
 
 
 class PersonTestCase(TestCase):
@@ -25,7 +26,6 @@ class PersonTestCase(TestCase):
     
     def test_person_create(self):
         person = Person.objects.first()
-        print(Person.objects.all())
         self.assertEqual(person.name, "Jessica Paz")
         
 
@@ -65,7 +65,7 @@ class SellerTestCase(TestCase):
         self.person = Person.objects.first()
         Seller.objects.create(
             person=self.person,
-            salary=5500
+            salary=5500.67
         )
     
     def test_saller_create(self):
@@ -99,3 +99,18 @@ class ClientTestCase(TestCase):
     def test_client_create(self):
         client = Client.objects.get(pk=1)
         self.assertEqual(client.person.rg, "2583356")
+
+
+class ProductServiceTestCase(TestCase):
+    def setUp(self):
+        ProductService.objects.create(
+            type_choice="P",
+            name="AAA",
+            price=5214.65,
+            commission=0.2
+        )
+    
+    def test_product_service_create(self):
+        product_service = ProductService.objects.first()
+        self.assertEqual(product_service.name, "AAA")
+        self.assertNotEqual(product_service.name, 0.5)
