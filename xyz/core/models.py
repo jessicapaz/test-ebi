@@ -41,3 +41,11 @@ class Seller(models.Model):
         on_delete=models.CASCADE
     )
     salary = models.IntegerField()
+
+
+class Client(models.Model):
+    person = models.ForeignKey(
+        "Person",
+        on_delete=models.CASCADE
+    )
+    

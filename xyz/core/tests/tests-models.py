@@ -2,6 +2,7 @@ from django.test import TestCase
 from core.models import Address
 from core.models import Person
 from core.models import Seller
+from core.models import Client
 
 
 class PersonTestCase(TestCase):
@@ -23,8 +24,10 @@ class PersonTestCase(TestCase):
         )
     
     def test_person_create(self):
-        person = Person.objects.get(pk=1)
+        person = Person.objects.first()
+        print(Person.objects.all())
         self.assertEqual(person.name, "Jessica Paz")
+        
 
 
 class AddressTestCase(TestCase):
@@ -68,3 +71,31 @@ class SellerTestCase(TestCase):
     def test_saller_create(self):
         saller = Seller.objects.get(pk=1)
         self.assertEqual(saller.person.name, "Jessica Paz")
+
+
+class ClientTestCase(TestCase):
+    def setUp(self):
+        Address.objects.create(
+            streat="Av X",
+            number="25",
+            neighborhood="40 horas",
+            zip_code="67128069"
+        )
+
+        self.address = Address.objects.first()
+        Person.objects.create(
+            name="Jessica Paz",
+            rg="2583356",
+            cpf="03278958256",
+            address=self.address,
+            phone="91987523698"
+        )
+
+        self.person = Person.objects.first()
+        Client.objects.create(
+            person=self.person
+        )
+    
+    def test_client_create(self):
+        client = Client.objects.get(pk=1)
+        self.assertEqual(client.person.rg, "2583356")
