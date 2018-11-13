@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.utils import timezone
 
 
 class Person(models.Model):
@@ -74,5 +75,24 @@ class ProductService(models.Model):
         decimal_places=2
     )
     commission = models.FloatField(
-        validators=[MaxValueValidator(1.0), MinValueValidator(0.0)]
+        validators=[MaxValueValidator(0.1), MinValueValidator(0.0)]
+    )
+
+
+class Sale(models.Model):
+    product_service = models.ManyToManyField(
+        "ProductService"
+    )
+    seller = models.ForeignKey(
+        "Seller",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+    client = models.ForeignKey(
+        "Client",
+        on_delete=models.PROTECT
+    )
+    timestamp = models.DateTimeField(
+        default=timezone.now()
     )
