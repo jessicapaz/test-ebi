@@ -33,3 +33,11 @@ class Address(models.Model):
     zip_code = models.CharField(
         max_length=8
     )
+
+
+class Seller(models.Model):
+    person = models.ForeignKey(
+        "Person",
+        on_delete=models.CASCADE
+    )
+    salary = models.IntegerField()
