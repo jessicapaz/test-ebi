@@ -46,6 +46,16 @@ class Seller(models.Model):
         max_digits=8,
         decimal_places=2
     )
+   
+    def commission_per_date(self, start, end):
+        sales = Sale.objects.filter(
+            seller=self,
+            timestamp__range=[start, end]
+        )
+        total = []
+        for sale in sales:
+            total.append(sale.total_commission)
+        return sum(total)
 
 
 class Client(models.Model):
@@ -74,9 +84,14 @@ class ProductService(models.Model):
         max_digits=8,
         decimal_places=2
     )
-    commission = models.FloatField(
+    commission_rate = models.FloatField(
         validators=[MaxValueValidator(0.1), MinValueValidator(0.0)]
     )
+
+    @property
+    def commission(self):
+        commission = self.commission_rate * float(self.price)
+        return round(commission, 2)
 
 
 class Sale(models.Model):
@@ -96,3 +111,12 @@ class Sale(models.Model):
     timestamp = models.DateTimeField(
         default=timezone.now()
     )
+
+    @property
+    def total_commission(self):
+        commissions = []
+        for product in self.product_service.all():
+            commission = product.commission
+            commissions.append(commission)
+        total = sum(commissions)
+        return total
