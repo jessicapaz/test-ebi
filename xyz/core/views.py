@@ -1,5 +1,6 @@
 from rest_framework import viewsets
 from rest_framework import generics
+from rest_framework import views
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from .models import Person
@@ -33,6 +34,20 @@ class SellerViewSet(viewsets.ViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class SellerCommissionView(views.APIView):
+
+    def get(self, request, *args, **kwargs):
+        cpf = request.GET.get("cpf")
+        start = request.GET.get("start")
+        end = request.GET.get("end")
+        person = get_object_or_404(Person, cpf=cpf)
+        client = get_object_or_404(Client, person=person)
+        commission = seller.commission_per_date(start, end)
+        data = {
+            "total-commission": commission
+        }
+        return Response(data, status.HTTP_200_OK)
+
 class ClientViewSet(viewsets.ViewSet):
 
     queryset = Client.objects.all()
@@ -51,6 +66,17 @@ class ClientViewSet(viewsets.ViewSet):
             return Response(data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class ClientProductsView(views.APIView):
+
+    def get(self, request, *args, **kwargs):
+        cpf = request.GET.get("cpf")
+        start = request.GET.get("start")
+        end = request.GET.get("end")
+        person = get_object_or_404(Person, cpf=cpf)
+        client = get_object_or_404(Client, person=person)
+        client_most_selled = ProductService.objects.client_most_selled(start, end, client)
+        data = ProductServiceSerializer(client_most_selled, many=True).data
+        return Response(data, status.HTTP_200_OK)
 
 class ProductServiceView(generics.ListCreateAPIView):
     queryset = ProductService.objects.all()
@@ -60,3 +86,13 @@ class ProductServiceView(generics.ListCreateAPIView):
 class SaleView(generics.ListCreateAPIView):
     queryset = Sale.objects.all()
     serializer_class = SaleSerializer
+
+
+class TopProductsView(views.APIView):
+    def get(self, request, *args, **kwargs):
+        start = request.GET.get("start")
+        end = request.GET.get("end")
+        top_products = ProductService.objects.most_selled(start, end)
+        data = ProductServiceSerializer(top_products, many=True).data
+
+        return Response(data, status.HTTP_200_OK)

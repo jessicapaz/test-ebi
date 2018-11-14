@@ -209,11 +209,3 @@ class SaleTestCase(TestCase):
         sale = Sale.objects.first()
         total_commission = sale.total_commission
         self.assertEqual(total_commission, 114.29)
-
-    def test_top_products_per_date(self):
-        sale = Sale.objects.first()
-        start = "2018-11-13T12:00:00Z"
-        end = "2018-11-16T12:00:00Z"
-        products_per_date = sale.top_products_per_date(start, end)
-
-        self.assertEqual(len(products_per_date), 1)
