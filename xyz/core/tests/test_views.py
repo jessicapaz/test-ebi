@@ -29,3 +29,28 @@ class SellerTestCase(APITestCase):
         }
         response = self.client.post(self.url, data=data, format='json')
         self.assertEqual(json.loads(response.content), data)
+
+
+class ClientTestCase(APITestCase):
+    url = '/client/'
+
+    def setUp(self):
+        self.username = "jessicapaz"
+        self.password = "test"
+        self.user = User.objects.create_user(self.username, self.password)
+        self.user.is_staff = True
+        self.user.save()
+        self.client.force_authenticate(user=self.user)
+
+    def test_create_client(self):
+        data = {
+          "name": "Jessica",
+          "rg": "456446",
+          "cpf": "465468865",
+          "phone": "45465464",
+          "client": {
+            "email": "jessica@gmail.com"
+            }
+        }
+        response = self.client.post(self.url, data=data, format='json')
+        self.assertEqual(json.loads(response.content), data)

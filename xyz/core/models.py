@@ -48,6 +48,7 @@ class Client(models.Model):
         "Person",
         on_delete=models.CASCADE
     )
+    email = models.EmailField()
 
     def products_per_date(self, start, end):
         sales = Sale.objects.filter(

@@ -11,6 +11,7 @@ class SellerSerializer(serializers.ModelSerializer):
         fields = ('salary',)
         depth = 2
 
+
 class PersonSellerSerializer(serializers.ModelSerializer):
     seller = SellerSerializer(required=True)
 
@@ -22,4 +23,25 @@ class PersonSellerSerializer(serializers.ModelSerializer):
         seller_data = validated_data.pop('seller')
         person = Person.objects.create(**validated_data)
         Seller.objects.create(person=person, **seller_data)
+        return person
+
+
+class ClientSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Client
+        fields = ('email',)
+
+
+class PersonClientSerializer(serializers.ModelSerializer):
+    client = ClientSerializer(required=True)
+
+    class Meta:
+        model = Person
+        fields = ('name', 'rg', 'cpf', 'phone', 'client')
+
+    def create(self, validated_data):
+        client_data = validated_data.pop('client')
+        person = Person.objects.create(**validated_data)
+        Client.objects.create(person=person, **client_data)
         return person
