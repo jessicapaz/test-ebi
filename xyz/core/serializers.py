@@ -2,6 +2,8 @@ from rest_framework import serializers
 from .models import Person
 from .models import Seller
 from .models import Client
+from .models import ProductService
+from .models import Sale
 
 
 class SellerSerializer(serializers.ModelSerializer):
@@ -45,3 +47,16 @@ class PersonClientSerializer(serializers.ModelSerializer):
         person = Person.objects.create(**validated_data)
         Client.objects.create(person=person, **client_data)
         return person
+
+class ProductServiceSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = ProductService
+        fields = ('type_choice', 'name', 'description', 'price', 'commission_rate')
+
+
+class SaleSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Sale
+        fields = ('product_service', 'seller', 'client', 'timestamp')

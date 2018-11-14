@@ -1,11 +1,16 @@
 from rest_framework import viewsets
+from rest_framework import generics
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from .models import Person
 from .models import Seller
 from .models import Client
+from .models import ProductService
+from .models import Sale
 from .serializers import PersonSellerSerializer
 from .serializers import PersonClientSerializer
+from .serializers import ProductServiceSerializer
+from .serializers import SaleSerializer
 from rest_framework import status
 
 
@@ -45,3 +50,13 @@ class ClientViewSet(viewsets.ViewSet):
             }
             return Response(data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ProductServiceView(generics.ListCreateAPIView):
+    queryset = ProductService.objects.all()
+    serializer_class = ProductServiceSerializer
+
+
+class SaleView(generics.ListCreateAPIView):
+    queryset = Sale.objects.all()
+    serializer_class = SaleSerializer
