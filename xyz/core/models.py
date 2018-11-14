@@ -14,29 +14,11 @@ class Person(models.Model):
         max_length=14
     )
     cpf = models.CharField(
+        unique=True,
         max_length=11
-    )
-    address = models.ForeignKey(
-        'Address',
-        on_delete=models.CASCADE
     )
     phone = models.CharField(
         max_length=11
-    )
-
-
-class Address(models.Model):
-    streat = models.CharField(
-        max_length=50
-    )
-    number = models.CharField(
-        max_length=6
-    )
-    neighborhood = models.CharField(
-        max_length=20
-    )
-    zip_code = models.CharField(
-        max_length=8
     )
 
 
@@ -49,7 +31,7 @@ class Seller(models.Model):
         max_digits=8,
         decimal_places=2
     )
-   
+
     def commission_per_date(self, start, end):
         sales = Sale.objects.filter(
             seller=self,
@@ -133,7 +115,7 @@ class Sale(models.Model):
             commissions.append(commission)
         total = sum(commissions)
         return total
-    
+
     def top_products_per_date(self, start, end):
         sales = Sale.objects.filter(
             timestamp__range=[start, end]
@@ -146,5 +128,3 @@ class Sale(models.Model):
                 product_name.append(product.name)
         counters.append(Counter(product_name))
         return reduce(add, counters)
-
-
