@@ -18,17 +18,17 @@ urlpatterns = [
         ProductServiceListView.as_view(),
         name='product-service'
     ),
-    path('product-service/<slug:pk>',
+    path('product-service/<slug:pk>/',
         ProductServiceDetailView.as_view(),
-        name='product-service'
+        name='product-service-detail'
     ),
     path('sale/',
         SaleListView.as_view(),
         name='sale'
     ),
-    path('sale/<slug:pk>',
+    path('sale/<slug:pk>/',
         SaleDetailView.as_view(),
-        name='sale'
+        name='sale-detail'
     ),
     path('seller-commission/',
         SellerCommissionView.as_view(),

@@ -123,6 +123,13 @@ class ProductServiceTesteCase(APITestCase):
         self.user.is_staff = True
         self.user.save()
         self.client.force_authenticate(user=self.user)
+        self.product = ProductService.objects.create(
+            type_choice="P",
+            name="AAA",
+            description="a",
+            price=5214.65,
+            commission_rate=0.02
+        )
 
     def test_create_product_service(self):
         data = {
@@ -136,8 +143,26 @@ class ProductServiceTesteCase(APITestCase):
         data["price"] = "454.00"
         self.assertEqual(json.loads(response.content), data)
 
+    def test_update_product_service(self):
+        product_id = self.product.id
+        data = {
+            "type_choice": "S",
+            "name": "se",
+            "description": "desc",
+            "price": 454.00,
+            "commission_rate": 0.02
+        }
+        response = self.client.put(f'{self.url}{product_id}/', data=data)
+        data["price"] = "454.00"
+        self.assertEqual(json.loads(response.content), data)
 
-class SaleTesteCase(APITestCase):
+    def test_delete_product_service(self):
+        product_id = self.product.id
+        response = self.client.delete(f'{self.url}{product_id}/')
+        self.assertEqual(response.status_code, 204)
+
+
+class SaleTestCase(APITestCase):
     url = '/sale/'
 
     def setUp(self):
@@ -185,6 +210,11 @@ class SaleTesteCase(APITestCase):
             price=100,
             commission_rate=0.1
         )
+        self.sale = Sale.objects.create(
+            seller=self.seller,
+            client=self.client_,
+            timestamp='2018-11-13T12:00:00Z'
+        )
 
     def test_create_sale(self):
         product = ProductService.objects.first()
@@ -199,6 +229,26 @@ class SaleTesteCase(APITestCase):
         }
         response = self.client.post(self.url, data=data)
         self.assertEqual(json.loads(response.content), data)
+
+    def test_update_sale(self):
+        product = ProductService.objects.first()
+        service = ProductService.objects.last()
+        seller = Seller.objects.first()
+        client_ = Client.objects.first()
+        sale_id = self.sale.id
+        data = {
+            "product_service": [product.id, service.id],
+            "seller": seller.id,
+            "client": client_.id,
+            "timestamp": '2017-08-27T10:00:00Z'
+        }
+        response = self.client.put(f'{self.url}{sale_id}/', data=data)
+        self.assertEqual(json.loads(response.content), data)
+
+    def test_delete_sale(self):
+        sale_id = self.sale.id
+        response = self.client.delete(f'{self.url}{sale_id}/')
+        self.assertEqual(response.status_code, 204)
 
 
 class SellerCommissionTestCase(APITestCase):
@@ -271,6 +321,69 @@ class SellerCommissionTestCase(APITestCase):
         self.assertEqual(json.loads(response.content), data)
 
 
+class MostSoldTestCase(APITestCase):
+    url = '/most-sold/'
+
+    def setUp(self):
+        self.username = "jessicapaz"
+        self.password = "test"
+        self.user = User.objects.create_user(self.username, self.password)
+        self.user.is_staff = True
+        self.user.save()
+        self.client.force_authenticate(user=self.user)
+
+        self.person_1 = Person.objects.create(
+            name="Jessica Paz",
+            rg="2583356",
+            cpf="03278900256",
+            phone="91987523698"
+        )
+        self.person_2 = Person.objects.create(
+            name="Jessica Paz",
+            rg="2583356",
+            cpf="0327838256",
+            phone="91987523698"
+        )
+
+        self.seller = Seller.objects.create(
+            person=self.person_1,
+            salary=5500.67
+        )
+
+        self.client_ = Client.objects.create(
+            person=self.person_2
+        )
+
+        self.service = ProductService.objects.create(
+            type_choice="S",
+            name="p 2",
+            price=100,
+            commission_rate=0.1
+        )
+
+        self.sale_create = Sale(
+            client=self.client_,
+            seller=self.seller,
+            timestamp='2018-11-13T12:00:00Z'
+        )
+        self.sale_create.save()
+        self.sale_create.product_service.add(self.service)
+
+
+    def test_most_sold_per_date(self):
+        data = [
+            {
+                "type_choice": "S",
+                "name": "p 2",
+                "price": "100.00",
+                "commission_rate": 0.1,
+                'description': '',
+            }]
+        response = self.client.get(
+        f'{self.url}?start=2018-08-27 12:00&end=2018-12-13 12:00')
+        self.assertEqual(json.loads(response.content), data)
+
+
 class ClientProductsTestCase(APITestCase):
     url = '/client-most-sold/'
 
@@ -330,6 +443,6 @@ class ClientProductsTestCase(APITestCase):
                 'description': '',
             }]
         response = self.client.get(
-        f'{self.url}?start=2018-08-27 12:00&end=2018-12-13 12:00&cpf=0327838256'
+            f'{self.url}?start=2018-08-27 12:00&end=2018-12-13 12:00&cpf=0327838256'
         )
         self.assertEqual(json.loads(response.content), data)
