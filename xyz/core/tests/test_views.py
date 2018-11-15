@@ -73,6 +73,17 @@ class ClientTestCase(APITestCase):
         self.user.save()
         self.client.force_authenticate(user=self.user)
 
+        self.person = Person.objects.create(
+            name="Jessica Paz",
+            rg="2583356",
+            cpf="03241258789",
+            phone="91987857598"
+        )
+        self.client_ = Client.objects.create(
+            person=self.person,
+            email="test@gmail.com"
+        )
+
     def test_create_client(self):
         data = {
           "name": "Jessica",
@@ -84,6 +95,21 @@ class ClientTestCase(APITestCase):
             }
         }
         response = self.client.post(self.url, data=data, format='json')
+        self.assertEqual(json.loads(response.content), data)
+
+    def test_update_client(self):
+        person_id = self.person.id
+
+        data = {
+          "name": "Ana",
+          "rg": "456446",
+          "cpf": "03247898565",
+          "phone": "9981875978",
+          "client": {
+            "email": "test@gmail.com"
+            }
+        }
+        response = self.client.put(f'{self.url}{person_id}/', data=data, format='json')
         self.assertEqual(json.loads(response.content), data)
 
 
@@ -107,7 +133,8 @@ class ProductServiceTesteCase(APITestCase):
             "commission_rate": 0.02
         }
         response = self.client.post(self.url, data=data, format='json')
-        self.assertEqual(response.content, data)
+        data["price"] = "454.00"
+        self.assertEqual(json.loads(response.content), data)
 
 
 class SaleTesteCase(APITestCase):
@@ -268,25 +295,16 @@ class ClientProductsTestCase(APITestCase):
             phone="91987523698"
         )
 
-        self.person_1 = Person.objects.first()
         self.seller = Seller.objects.create(
             person=self.person_1,
             salary=5500.67
         )
 
-        self.person_2 = Person.objects.last()
         self.client_ = Client.objects.create(
             person=self.person_2
         )
 
-        self.product_1 = ProductService.objects.create(
-            type_choice="P",
-            name="p 1",
-            price=5214.65,
-            commission_rate=0.02
-        )
-
-        self.product_2 = ProductService.objects.create(
+        self.service = ProductService.objects.create(
             type_choice="S",
             name="p 2",
             price=100,
@@ -299,18 +317,18 @@ class ClientProductsTestCase(APITestCase):
             timestamp='2018-11-13T12:00:00Z'
         )
         self.sale_create.save()
-        self.product = ProductService.objects.first()
-        self.service = ProductService.objects.last()
-        self.sale_create.product_service.add(self.product)
         self.sale_create.product_service.add(self.service)
 
 
     def test_client_products_per_date(self):
-        data = {
-            "total-products" : [
-                "p 1", "p 2"
-            ]
-        }
+        data = [
+            {
+                "type_choice": "S",
+                "name": "p 2",
+                "price": "100.00",
+                "commission_rate": 0.1,
+                'description': '',
+            }]
         response = self.client.get(
         f'{self.url}?start=2018-08-27 12:00&end=2018-12-13 12:00&cpf=0327838256'
         )

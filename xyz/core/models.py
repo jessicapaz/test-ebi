@@ -68,7 +68,8 @@ class ProductService(models.Model):
     name = models.CharField(
         max_length=30
     )
-    description = models.TextField(
+    description = models.CharField(
+        max_length=50,
         blank=True
     )
     price = models.DecimalField(

@@ -90,6 +90,14 @@ class ClientViewSet(viewsets.ViewSet):
             return Response(data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def update(self, request, pk=None):
+        instance = Person.objects.get(pk=pk)
+        serializer = PersonClientSerializer(instance, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            data = self.get_client_data(request)
+            return Response(data)
+
 class ClientProductsView(views.APIView):
 
     def get(self, request, *args, **kwargs):

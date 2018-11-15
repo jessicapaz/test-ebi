@@ -64,6 +64,22 @@ class PersonClientSerializer(serializers.ModelSerializer):
         Client.objects.create(person=person, **client_data)
         return person
 
+    def update(self, instance, validated_data):
+        client_data = validated_data.pop('client')
+        client = Client.objects.get(person=instance)
+
+        instance.name = validated_data.get('name', instance.name)
+        instance.rg = validated_data.get('rg', instance.rg)
+        instance.cpf = validated_data.get('cpf', instance.cpf)
+        instance.phone = validated_data.get('phone', instance.phone)
+        instance.save()
+
+        client.email = client_data.get('email', client.email)
+        client.save()
+
+        return instance
+
+
 class ProductServiceSerializer(serializers.ModelSerializer):
 
     class Meta:
