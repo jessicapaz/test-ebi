@@ -27,8 +27,8 @@ class SellerTestCase(APITestCase):
         data = {
           "name": "Jessica",
           "rg": "456446",
-          "cpf": "465468865",
-          "phone": "45465464",
+          "cpf": "03247898565",
+          "phone": "9981875978",
           "seller": {
             "salary": 6554.6
             }
@@ -52,10 +52,10 @@ class ClientTestCase(APITestCase):
         data = {
           "name": "Jessica",
           "rg": "456446",
-          "cpf": "465468865",
-          "phone": "45465464",
+          "cpf": "03278987458",
+          "phone": "91987857898",
           "client": {
-            "email": "jessica@gmail.com"
+            "email": "test@gmail.com"
             }
         }
         response = self.client.post(self.url, data=data, format='json')
@@ -214,13 +214,13 @@ class SellerCommissionTestCase(APITestCase):
             "total-commission" : 114.29
         }
         response = self.client.get(
-        f'{self.url}?start=2018-08-27 12:00Z&end=2018-12-13 12:00&cpf=03278900256'
+            f'{self.url}?start=2018-08-27&end=2018-12-13&cpf=03278900256'
         )
         self.assertEqual(json.loads(response.content), data)
 
 
 class ClientProductsTestCase(APITestCase):
-    url = '/total-products/'
+    url = '/client-most-products/'
 
     def setUp(self):
         self.username = "jessicapaz"

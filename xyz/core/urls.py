@@ -1,11 +1,13 @@
 from django.urls import path
 from .views import SellerViewSet
 from .views import ClientViewSet
-from .views import ProductServiceView
-from .views import SaleView
+from .views import ProductServiceListView
+from .views import ProductServiceDetailView
+from .views import SaleListView
+from .views import SaleDetailView
 from .views import SellerCommissionView
 from .views import ClientProductsView
-from .views import TopProductsView
+from .views import MostSelledView
 from rest_framework.routers import SimpleRouter
 
 router = SimpleRouter()
@@ -13,12 +15,20 @@ router.register('seller', SellerViewSet, base_name='seller')
 router.register('client', ClientViewSet, base_name='client')
 urlpatterns = [
     path('product-service/',
-        ProductServiceView.as_view(),
+        ProductServiceListView.as_view(),
         name='product-service'
     ),
+    path('product-service-detail/<slug:pk>',
+        ProductServiceDetailView.as_view(),
+        name='product-service-detail'
+    ),
     path('sale/',
-        SaleView.as_view(),
+        SaleListView.as_view(),
         name='sale'
+    ),
+    path('sale-detail/<slug:pk>',
+        SaleDetailView.as_view(),
+        name='sale-detail'
     ),
     path('total-commission/',
         SellerCommissionView.as_view(),
@@ -28,9 +38,9 @@ urlpatterns = [
         ClientProductsView.as_view(),
         name='client-most-products'
     ),
-    path('top-products/',
-        TopProductsView.as_view(),
-        name='top-products'
+    path('most-selled/',
+        MostSelledView.as_view(),
+        name='most-selled'
     ),
 ]
 

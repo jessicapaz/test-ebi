@@ -128,19 +128,6 @@ class ClientTestCase(TestCase):
         client = Client.objects.get(pk=1)
         self.assertEqual(client.person.rg, "2583356")
 
-    def test_client_products_per_date(self):
-        client = Client.objects.first()
-        start = "2018-11-13T12:00:00Z"
-        end = "2018-11-16T12:00:00Z"
-        products_per_date = client.products_per_date(start, end)
-
-        products_name = []
-        for products in products_per_date:
-            for product in products:
-                products_name.append(product.name)
-
-        self.assertEqual(products_name, ["AAA"])
-
 
 class ProductServiceTestCase(TestCase):
     def setUp(self):

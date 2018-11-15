@@ -1,4 +1,5 @@
 from rest_framework import serializers
+
 from .models import Person
 from .models import Seller
 from .models import Client
@@ -11,7 +12,6 @@ class SellerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Seller
         fields = ('salary',)
-        depth = 2
 
 
 class PersonSellerSerializer(serializers.ModelSerializer):
@@ -26,6 +26,22 @@ class PersonSellerSerializer(serializers.ModelSerializer):
         person = Person.objects.create(**validated_data)
         Seller.objects.create(person=person, **seller_data)
         return person
+
+    def update(self, instance, validated_data):
+        seller_data = validated_data.pop('seller')
+        seller = instance.seller
+
+        instance.name = validated_data.get('name', instance.name)
+        instance.rg = validated_data.get('rg', instance.rg)
+        instance.cpf = validated_data.get('cpf', instance.cpf)
+        instance.phone = validated_data.get('phone', instance.phone)
+        instance.save()
+
+        seller.salary = seller_data.get('salary', seller.salary)
+        profile.save()
+
+        return instance
+
 
 
 class ClientSerializer(serializers.ModelSerializer):

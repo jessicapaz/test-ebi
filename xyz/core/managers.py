@@ -1,5 +1,6 @@
 from django.db import models
 from django.apps import apps
+
 from collections import Counter
 from operator import add
 from functools import reduce

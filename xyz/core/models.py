@@ -1,7 +1,11 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.utils import timezone
+
 from .managers import ProductManager
+
+from .validators import validate_phone
+from .validators import validate_cpf_len
 
 
 class Person(models.Model):
@@ -13,10 +17,12 @@ class Person(models.Model):
     )
     cpf = models.CharField(
         unique=True,
-        max_length=11
+        max_length=11,
+        validators=[validate_cpf_len]
     )
     phone = models.CharField(
-        max_length=11
+        max_length=11,
+        validators=[validate_phone]
     )
 
 
@@ -39,6 +45,7 @@ class Seller(models.Model):
         for sale in sales:
             total.append(sale.total_commission)
         return sum(total)
+
 
 
 class Client(models.Model):
