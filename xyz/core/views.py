@@ -106,8 +106,8 @@ class ClientProductsView(views.APIView):
         end = request.GET.get("end")
         person = get_object_or_404(Person, cpf=cpf)
         client = get_object_or_404(Client, person=person)
-        client_most_selled = ProductService.objects.client_most_selled(start, end, client)
-        data = ProductServiceSerializer(client_most_selled, many=True).data
+        client_most_sold = ProductService.objects.client_most_sold(start, end, client)
+        data = ProductServiceSerializer(client_most_sold, many=True).data
         return Response(data, status.HTTP_200_OK)
 
 
@@ -131,12 +131,12 @@ class SaleDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = SaleSerializer
 
 
-class MostSelledView(views.APIView):
+class MostSoldView(views.APIView):
     def get(self, request, *args, **kwargs):
         start = request.GET.get("start")
         end = request.GET.get("end")
         try:
-            top_products = ProductService.objects.most_selled(start, end)
+            top_products = ProductService.objects.most_sold(start, end)
         except TypeError:
             error_message = "no product/service sold on this date range."
             raise NotFound(detail=error_message)

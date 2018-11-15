@@ -202,7 +202,7 @@ class SaleTesteCase(APITestCase):
 
 
 class SellerCommissionTestCase(APITestCase):
-    url = '/total-commission/'
+    url = '/seller-commission/'
 
     def setUp(self):
         self.username = "jessicapaz"
@@ -272,7 +272,7 @@ class SellerCommissionTestCase(APITestCase):
 
 
 class ClientProductsTestCase(APITestCase):
-    url = '/client-most-products/'
+    url = '/client-most-sold/'
 
     def setUp(self):
         self.username = "jessicapaz"

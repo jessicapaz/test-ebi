@@ -7,7 +7,7 @@ from functools import reduce
 
 
 class ProductManager(models.Manager):
-    def most_selled(self, start=0, end=0):
+    def most_sold(self, start=0, end=0):
         sale_model = apps.get_model('core', 'Sale')
         sales = sale_model.objects.filter(
             timestamp__range=[start, end]
@@ -19,7 +19,7 @@ class ProductManager(models.Manager):
         return list(reduce(add, counters))
 
 
-    def client_most_selled(self, start=0, end=0, client=""):
+    def client_most_sold(self, start=0, end=0, client=""):
         sale_model = apps.get_model('core', 'Sale')
         sales = sale_model.objects.filter(
             client=client,

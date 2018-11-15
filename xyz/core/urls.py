@@ -7,7 +7,7 @@ from .views import SaleListView
 from .views import SaleDetailView
 from .views import SellerCommissionView
 from .views import ClientProductsView
-from .views import MostSelledView
+from .views import MostSoldView
 from rest_framework.routers import SimpleRouter
 
 router = SimpleRouter()
@@ -18,29 +18,29 @@ urlpatterns = [
         ProductServiceListView.as_view(),
         name='product-service'
     ),
-    path('product-service-detail/<slug:pk>',
+    path('product-service/<slug:pk>',
         ProductServiceDetailView.as_view(),
-        name='product-service-detail'
+        name='product-service'
     ),
     path('sale/',
         SaleListView.as_view(),
         name='sale'
     ),
-    path('sale-detail/<slug:pk>',
+    path('sale/<slug:pk>',
         SaleDetailView.as_view(),
-        name='sale-detail'
+        name='sale'
     ),
-    path('total-commission/',
+    path('seller-commission/',
         SellerCommissionView.as_view(),
-        name='total-commission'
+        name='seller-commission'
     ),
-    path('client-most-products/',
+    path('client-most-sold/',
         ClientProductsView.as_view(),
-        name='client-most-products'
+        name='client-most-sold'
     ),
-    path('most-selled/',
-        MostSelledView.as_view(),
-        name='most-selled'
+    path('most-sold/',
+        MostSoldView.as_view(),
+        name='most-sold'
     ),
 ]
 
