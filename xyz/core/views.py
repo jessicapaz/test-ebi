@@ -41,6 +41,14 @@ class SellerViewSet(viewsets.ViewSet):
             return Response(data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def update(self, request, pk=None):
+        instance = Person.objects.get(pk=pk)
+        serializer = PersonSellerSerializer(instance, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            data = self.get_seller_data(request)
+            return Response(data)
+
 
 
 class SellerCommissionView(views.APIView):

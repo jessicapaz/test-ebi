@@ -29,7 +29,7 @@ class PersonSellerSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         seller_data = validated_data.pop('seller')
-        seller = instance.seller
+        seller = Seller.objects.get(person=instance)
 
         instance.name = validated_data.get('name', instance.name)
         instance.rg = validated_data.get('rg', instance.rg)
@@ -38,7 +38,7 @@ class PersonSellerSerializer(serializers.ModelSerializer):
         instance.save()
 
         seller.salary = seller_data.get('salary', seller.salary)
-        profile.save()
+        seller.save()
 
         return instance
 

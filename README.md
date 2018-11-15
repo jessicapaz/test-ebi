@@ -8,6 +8,8 @@
 
 `$ pipenv shell`
 
+### Modifique o arquivo .env e em seguida:
+
 `$ python manage.py migrate`
 
 # Tests

@@ -31,6 +31,12 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_PARSER_CLASSES': (
+        'rest_framework.parsers.JSONParser',
+    )
+}
+
 ROOT_URLCONF = 'xyz.urls'
 
 TEMPLATES = [

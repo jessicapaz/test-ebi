@@ -22,6 +22,16 @@ class SellerTestCase(APITestCase):
         self.user.is_staff = True
         self.user.save()
         self.client.force_authenticate(user=self.user)
+        self.person = Person.objects.create(
+            name="Jessica Paz",
+            rg="2583356",
+            cpf="03241258789",
+            phone="91987857598"
+        )
+        self.seller = Seller.objects.create(
+            person=self.person,
+            salary=5500.67
+        )
 
     def test_create_seller(self):
         data = {
@@ -34,6 +44,21 @@ class SellerTestCase(APITestCase):
             }
         }
         response = self.client.post(self.url, data=data, format='json')
+        self.assertEqual(json.loads(response.content), data)
+
+    def test_update_seller(self):
+        person_id = self.person.id
+
+        data = {
+          "name": "Ana",
+          "rg": "456446",
+          "cpf": "03247898565",
+          "phone": "9981875978",
+          "seller": {
+            "salary": 6554.6
+            }
+        }
+        response = self.client.put(f'{self.url}{person_id}/', data=data, format='json')
         self.assertEqual(json.loads(response.content), data)
 
 
